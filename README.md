@@ -95,3 +95,30 @@ SQLite schema and migration entrypoint:
 - Renderer never imports Node APIs directly.
 - IPC contracts are versioned (`window.api.v1.*`) and boundary-validated with zod.
 
+
+## Troubleshooting
+
+### Vite `TSConfckParseError` cannot resolve `extends`
+If you see a message like:
+
+- `failed to resolve "extends":"../../../tsconfig.json" in apps/desktop/src/ui/tsconfig.json`
+
+make sure the UI tsconfig extends the repo root config using:
+
+```json
+"extends": "../../../../tsconfig.json"
+```
+
+### Electron on Linux/WSL: `libnss3.so` missing
+Electron requires system libraries that may be missing in minimal Linux/WSL environments. Install them and retry:
+
+```bash
+sudo apt update
+sudo apt install -y libnss3 libatk-bridge2.0-0 libgtk-3-0 libgbm1
+```
+
+Then run:
+
+```bash
+npm run dev
+```
