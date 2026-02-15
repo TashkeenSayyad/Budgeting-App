@@ -7,8 +7,15 @@ const requiredLibraries = [
   'libatk-1.0.so.0',
   'libatk-bridge-2.0.so.0',
   'libgtk-3.so.0',
-  'libxss.so.1',
   'libasound.so.2'
+];
+
+const optionalLibraries = [
+  {
+    name: 'libxss.so.1',
+    reason:
+      'This library is only needed by some Electron builds/distributions. Missing it should not block local development.'
+  }
 ];
 
 function commandExists(command) {
@@ -56,8 +63,17 @@ if (process.platform !== 'linux') {
 }
 
 const missing = requiredLibraries.filter((library) => !checkLibrary(library));
+const missingOptional = optionalLibraries.filter((library) => !checkLibrary(library.name));
 
 if (missing.length === 0) {
+  if (missingOptional.length > 0) {
+    console.warn('\nOptional Electron shared libraries are missing:');
+    for (const library of missingOptional) {
+      console.warn(`  - ${library.name}`);
+      console.warn(`    ${library.reason}`);
+    }
+    console.warn('Continuing because these libraries are treated as optional.\n');
+  }
   process.exit(0);
 }
 
@@ -68,7 +84,10 @@ for (const library of missing) {
 }
 console.error('\nInstall desktop dependencies and retry. For Ubuntu/WSL, run:');
 console.error('  sudo apt-get update');
-console.error('  sudo apt-get install -y libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libgtk-3-0t64 libxss1 libasound2t64');
+console.error('  sudo apt-get install -y libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libgtk-3-0t64 libasound2t64');
 console.error('  # Older Ubuntu/Debian releases may use non-t64 package names:');
-console.error('  sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2');
+console.error('  sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libasound2');
+console.error('  # Optional: install libxss1 only if your Electron build requires it.');
+console.error('  sudo apt-get install -y libxss1');
 process.exit(1);
+
