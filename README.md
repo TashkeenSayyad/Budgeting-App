@@ -18,6 +18,21 @@ npm run test
 npm run make
 ```
 
+## Linux / WSL runtime dependencies
+
+If Electron fails with a missing shared library error (for example `libnss3.so`), install the required desktop runtime packages:
+
+```bash
+sudo apt-get update
+# Ubuntu 24.04+/newer Debian (t64 naming)
+sudo apt-get install -y libnss3 libatk1.0-0t64 libatk-bridge2.0-0t64 libgtk-3-0t64 libxss1 libasound2t64
+
+# Older Ubuntu/Debian
+sudo apt-get install -y libnss3 libatk1.0-0 libatk-bridge2.0-0 libgtk-3-0 libxss1 libasound2
+```
+
+The `npm run dev` command now runs a Linux dependency preflight check and prints this install command if required libraries are missing.
+
 ## Architecture Overview
 
 ```text

@@ -6,13 +6,14 @@
   "author": "",
   "license": "MIT",
   "scripts": {
-    "dev": "electron-forge start",
+    "dev": "npm run check:electron-deps && electron-forge start",
     "make": "electron-forge make",
     "package": "electron-forge package",
     "lint": "eslint . --ext .ts,.tsx",
     "format": "prettier --write .",
     "typecheck": "tsc --noEmit && tsc --noEmit -p apps/desktop/src/ui/tsconfig.json",
-    "test": "vitest run"
+    "test": "vitest run",
+    "check:electron-deps": "node scripts/check-electron-linux-deps.mjs"
   },
   "config": {
     "forge": "./forge.config.ts"
