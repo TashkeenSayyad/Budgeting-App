@@ -37,11 +37,20 @@ export class TransactionsRepo {
   }
 
   upsert(input: Transaction): Transaction {
+    const payload = {
+      ...input,
+      categoryId: input.categoryId ?? null,
+      payee: input.payee ?? '',
+      note: input.note ?? '',
+      tagsJson: input.tagsJson ?? '[]',
+      cleared: Number(input.cleared)
+    };
+
     this.db
       .prepare(
         'INSERT INTO transactions(id,accountId,dateISO,amountMinor,categoryId,payee,note,tagsJson,cleared,createdAt,updatedAt) VALUES (@id,@accountId,@dateISO,@amountMinor,@categoryId,@payee,@note,@tagsJson,@cleared,@createdAt,@updatedAt) ON CONFLICT(id) DO UPDATE SET accountId=excluded.accountId,dateISO=excluded.dateISO,amountMinor=excluded.amountMinor,categoryId=excluded.categoryId,payee=excluded.payee,note=excluded.note,tagsJson=excluded.tagsJson,cleared=excluded.cleared,updatedAt=excluded.updatedAt'
       )
-      .run({ ...input, cleared: Number(input.cleared) });
+      .run(payload);
     return input;
   }
 
